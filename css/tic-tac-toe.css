@@ -2,6 +2,11 @@ h1 {
     text-align: center;
 }
 
+#actual-player {
+    font-size: 60px;
+    color: red;
+}
+
 #game-container {
     background-color: #fcfcfc;
     height: 450px;
@@ -9,7 +14,7 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 50px auto;
+    margin: 20px auto;
 }
 
 .row {
@@ -25,4 +30,30 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+}
+
+.item:hover {
+    background-color: darkgray;
+}
+
+#restart {
+    background-color: #4d8bff;
+    border: none;
+    border-radius: 4px;
+    color: #fafafa;
+    cursor: pointer;
+    font-size: 20px;
+    height: 60px;
+    margin: 20px;
+    width: 150px;
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+}
+
+#restart:hover {
+    background-color: #1d6bfb;
 }
