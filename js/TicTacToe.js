@@ -1,4 +1,4 @@
-(function(win, doc) {
+(function (win, doc) {
   const TicTacToe = function TicTacToe() {
     this.xPlayer = 'X';
     this.circlePlayer = 'O';
@@ -22,7 +22,7 @@
 
   TicTacToe.prototype.restart = function restart() {
     this.fillProperties();
-    this.$squares.forEach( $square => {
+    this.$squares.forEach($square => {
       $square.innerHTML = '';
       $square.style.backgroundColor = '#fff';
     });
@@ -37,28 +37,27 @@
   };
 
   TicTacToe.prototype.addEvents = function addEvents() {
-    this.$squares.forEach( ($square, index) => {
+    this.$squares.forEach(($square, index) => {
       $square.addEventListener('click', event => this.handleSquareClick(index));
     });
     this.$restart.addEventListener('click', event => this.restart());
   }
 
   TicTacToe.prototype.handleSquareClick = function handleSquareClick(index) {
-    if ( this.isGameOver ) {
+    if (this.isGameOver) {
       alert('Fim de jogo');
       return;
     }
-    const {target: clickedSquare} = event;
+    const { target: clickedSquare } = event;
     const actualPosition = this.gamePositions[index];
-    if ( actualPosition ) {
+    if (actualPosition) {
       return;
     }
     this.playsCounter++;
     this.gamePositions[index] = this.actualPlayer;
     clickedSquare.innerText = this.actualPlayer;
     clickedSquare.style.backgroundColor = '#e3e3e3'
-    if (this.validatesWin() ) {
-      sleep(300).then(() => alert(`Jogador: ${this.actualPlayer} venceu!`));
+    if (this.validatesWin()) {
       return;
     }
 
@@ -70,7 +69,18 @@
   }
 
   TicTacToe.prototype.validatesWin = function validatesWin() {
-    const winRangePositions = [
+    return this.getRangePositions().reduce((isWinner, range) => {
+      const [positionA, positionB, positionC] = this.getPlayerPositions(...range);
+      if (positionA && positionA === positionB && positionA === positionC) {
+        this.handleWin( range );
+        return true;
+      }
+      return isWinner || false;
+    }, false);
+  };
+
+  TicTacToe.prototype.getRangePositions = function getRangePositions() {
+    return [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -80,23 +90,26 @@
       [0, 4, 8],
       [2, 4, 6],
     ];
-    return winRangePositions.reduce( (isWinner, range) => {
-      const [rangePositionA, rangePositionB, rangePositionC] = range;
-      const positionA = this.gamePositions[rangePositionA],
-            positionB = this.gamePositions[rangePositionB],
-            positionC = this.gamePositions[rangePositionC];
-      if (positionA && positionA === positionB && positionA === positionC) {
-        this.isGameOver = true;
-        this.fillWinnerPositions(range);
-        return true;
-      }
-      return isWinner || false;
-    }, false);
   };
 
-  TicTacToe.prototype.fillWinnerPositions = function fillWinnerPositions( range ) {
-    this.$squares.forEach( ($square, index) => {
-      if ( range.indexOf( index ) !== -1 ) {
+  TicTacToe.prototype.getPlayerPositions = function getPlayerPositions(positionA, positionB, positionC) {
+    return [
+      this.gamePositions[positionA],
+      this.gamePositions[positionB],
+      this.gamePositions[positionC]
+    ];
+  };
+
+  TicTacToe.prototype.handleWin = function handleWin( range ) {
+    this.isGameOver = true;
+    this.fillWinnerPositions(range);
+    sleep(300).then(() => alert(`Jogador: ${this.actualPlayer} venceu!`));
+    this.$restart.focus();
+  }
+
+  TicTacToe.prototype.fillWinnerPositions = function fillWinnerPositions(range) {
+    this.$squares.forEach(($square, index) => {
+      if (range.indexOf(index) !== -1) {
         $square.style.backgroundColor = '#97ffa0';
       }
     });
