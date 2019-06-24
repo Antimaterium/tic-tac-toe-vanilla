@@ -5,28 +5,29 @@
     this.$actualPlayer = doc.querySelector('#actual-player');
     this.$restart = doc.querySelector('#restart');
     this.$squares = doc.querySelectorAll('.item');
-    this.fillProperties();
   };
-
+  
   TicTacToe.prototype.fillProperties = function fillProperties() {
     this.actualPlayer = this.getRandomPlayer();
     this.gamePositions = Array(9).fill(null);
     this.isGameOver = false;
     this.playsCounter = 0;
   }
-
+  
   TicTacToe.prototype.start = function start() {
+    this.fillProperties();
     this.setActualPlayerText();
     this.addEvents();
   };
 
   TicTacToe.prototype.restart = function restart() {
     this.fillProperties();
+    this.setActualPlayerText();
     this.$squares.forEach($square => {
       $square.innerHTML = '';
       $square.style.backgroundColor = '#fff';
     });
-  }
+  };
 
   TicTacToe.prototype.getRandomPlayer = function getRandomPlayer() {
     return Math.floor(Math.random() * 2) === 0 ? this.circlePlayer : this.xPlayer;
@@ -40,22 +41,18 @@
     this.$squares.forEach(($square, index) => {
       $square.addEventListener('click', event => this.handleSquareClick(index));
     });
-    this.$restart.addEventListener('click', event => this.restart());
-  }
+    this.$restart.addEventListener('click', this.restart.bind(this));
+  };
 
   TicTacToe.prototype.handleSquareClick = function handleSquareClick(index) {
-    if (this.isGameOver) {
-      alert('Fim de jogo');
-      return;
-    }
     const { target: clickedSquare } = event;
-    const actualPosition = this.gamePositions[index];
-    if (actualPosition) {
+    if (this.isGameOver || this.gamePositions[index]) {
+      alert('Fim de jogo');
       return;
     }
     this.playsCounter++;
     this.gamePositions[index] = this.actualPlayer;
-    clickedSquare.innerText = this.actualPlayer;
+    clickedSquare.innerHTML = this.actualPlayer;
     clickedSquare.style.backgroundColor = '#e3e3e3'
     if (this.validatesWin()) {
       return;
@@ -64,9 +61,9 @@
     if (this.playsCounter === this.gamePositions.length) {
       sleep(() => alert('Empate!!'));
     }
-    this.actualPlayer = this.actualPlayer === 'O' ? this.xPlayer : this.circlePlayer;
+    this.togglePlayer();    
     this.setActualPlayerText();
-  }
+  };
 
   TicTacToe.prototype.validatesWin = function validatesWin() {
     return this.getRangePositions().reduce((isWinner, range) => {
@@ -92,6 +89,10 @@
     ];
   };
 
+  TicTacToe.prototype.togglePlayer = function togglePlayer() {
+    this.actualPlayer = this.actualPlayer === 'O' ? this.xPlayer : this.circlePlayer;
+  }
+
   TicTacToe.prototype.getPlayerPositions = function getPlayerPositions(positionA, positionB, positionC) {
     return [
       this.gamePositions[positionA],
@@ -113,7 +114,7 @@
         $square.style.backgroundColor = '#97ffa0';
       }
     });
-  }
+  };
 
   win.TicTacToe = TicTacToe;
 })(window, document);
